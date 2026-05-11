@@ -16,6 +16,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
+	fibermid "github.com/oapi-codegen/oapi-codegen/v2/pkg/fibermid"
 	"github.com/oapi-codegen/runtime"
 )
 
@@ -125,11 +126,11 @@ func (siw *ServerInterfaceWrapper) GetContentObject(c *fiber.Ctx) error {
 	{
 		paramValue, decErr := url.PathUnescape(c.Params("param"))
 		if decErr != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Error unescaping path parameter 'param': %w", decErr).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("error unescaping path parameter 'param': %w", decErr).Error())
 		}
 		err = json.Unmarshal([]byte(paramValue), &param)
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Error unmarshaling parameter 'param' as JSON: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("error unmarshaling parameter 'param' as JSON: %w", err).Error())
 		}
 	}
 
@@ -164,7 +165,7 @@ func (siw *ServerInterfaceWrapper) GetCookie(c *fiber.Ctx) error {
 			var value int32
 			err = runtime.BindStyledParameterWithOptions("simple", "p", cookie, &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationCookie, Explode: false, Required: false, Type: "integer", Format: "int32"})
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter p: %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter p: %w", err).Error())
 			}
 			params.P = &value
 
@@ -178,7 +179,7 @@ func (siw *ServerInterfaceWrapper) GetCookie(c *fiber.Ctx) error {
 			var value int32
 			err = runtime.BindStyledParameterWithOptions("simple", "ep", cookie, &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationCookie, Explode: true, Required: false, Type: "integer", Format: "int32"})
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter ep: %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter ep: %w", err).Error())
 			}
 			params.Ep = &value
 
@@ -192,7 +193,7 @@ func (siw *ServerInterfaceWrapper) GetCookie(c *fiber.Ctx) error {
 			var value []int32
 			err = runtime.BindStyledParameterWithOptions("simple", "ea", cookie, &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationCookie, Explode: true, Required: false, Type: "array", Format: ""})
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter ea: %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter ea: %w", err).Error())
 			}
 			params.Ea = &value
 
@@ -206,7 +207,7 @@ func (siw *ServerInterfaceWrapper) GetCookie(c *fiber.Ctx) error {
 			var value []int32
 			err = runtime.BindStyledParameterWithOptions("simple", "a", cookie, &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationCookie, Explode: false, Required: false, Type: "array", Format: ""})
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter a: %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter a: %w", err).Error())
 			}
 			params.A = &value
 
@@ -220,7 +221,7 @@ func (siw *ServerInterfaceWrapper) GetCookie(c *fiber.Ctx) error {
 			var value Object
 			err = runtime.BindStyledParameterWithOptions("simple", "eo", cookie, &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationCookie, Explode: true, Required: false, Type: "", Format: ""})
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter eo: %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter eo: %w", err).Error())
 			}
 			params.Eo = &value
 
@@ -234,7 +235,7 @@ func (siw *ServerInterfaceWrapper) GetCookie(c *fiber.Ctx) error {
 			var value Object
 			err = runtime.BindStyledParameterWithOptions("simple", "o", cookie, &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationCookie, Explode: false, Required: false, Type: "", Format: ""})
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter o: %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter o: %w", err).Error())
 			}
 			params.O = &value
 
@@ -249,12 +250,12 @@ func (siw *ServerInterfaceWrapper) GetCookie(c *fiber.Ctx) error {
 			var decoded string
 			decoded, err := url.QueryUnescape(cookie)
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Error unescaping cookie parameter 'co': %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("error unescaping cookie parameter 'co': %w", err).Error())
 			}
 
 			err = json.Unmarshal([]byte(decoded), &value)
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Error unmarshaling parameter 'co' as JSON: %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("error unmarshaling parameter 'co' as JSON: %w", err).Error())
 			}
 
 			params.Co = &value
@@ -269,7 +270,7 @@ func (siw *ServerInterfaceWrapper) GetCookie(c *fiber.Ctx) error {
 			var value string
 			err = runtime.BindStyledParameterWithOptions("simple", "1s", cookie, &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationCookie, Explode: true, Required: false, Type: "string", Format: ""})
 			if err != nil {
-				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter 1s: %w", err).Error())
+				return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter 1s: %w", err).Error())
 			}
 			params.N1s = &value
 
@@ -303,14 +304,14 @@ func (siw *ServerInterfaceWrapper) EnumParams(c *fiber.Ctx) error {
 	var query url.Values
 	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for query string: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "enumPathParam" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "enumPathParam", query, &params.EnumPathParam, runtime.BindQueryParameterOptions{Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter enumPathParam: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter enumPathParam: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -349,7 +350,7 @@ func (siw *ServerInterfaceWrapper) GetHeader(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "X-Primitive", valueList[0], &XPrimitive, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: "int32"})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Primitive: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter X-Primitive: %w", err).Error())
 		}
 
 		params.XPrimitive = &XPrimitive
@@ -366,7 +367,7 @@ func (siw *ServerInterfaceWrapper) GetHeader(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "X-Primitive-Exploded", valueList[0], &XPrimitiveExploded, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: true, Required: false, Type: "integer", Format: "int32"})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Primitive-Exploded: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter X-Primitive-Exploded: %w", err).Error())
 		}
 
 		params.XPrimitiveExploded = &XPrimitiveExploded
@@ -383,7 +384,7 @@ func (siw *ServerInterfaceWrapper) GetHeader(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "X-Array-Exploded", valueList[0], &XArrayExploded, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: true, Required: false, Type: "array", Format: ""})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Array-Exploded: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter X-Array-Exploded: %w", err).Error())
 		}
 
 		params.XArrayExploded = &XArrayExploded
@@ -400,7 +401,7 @@ func (siw *ServerInterfaceWrapper) GetHeader(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "X-Array", valueList[0], &XArray, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "array", Format: ""})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Array: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter X-Array: %w", err).Error())
 		}
 
 		params.XArray = &XArray
@@ -417,7 +418,7 @@ func (siw *ServerInterfaceWrapper) GetHeader(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "X-Object-Exploded", valueList[0], &XObjectExploded, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: true, Required: false, Type: "", Format: ""})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Object-Exploded: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter X-Object-Exploded: %w", err).Error())
 		}
 
 		params.XObjectExploded = &XObjectExploded
@@ -434,7 +435,7 @@ func (siw *ServerInterfaceWrapper) GetHeader(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "X-Object", valueList[0], &XObject, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "", Format: ""})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter X-Object: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter X-Object: %w", err).Error())
 		}
 
 		params.XObject = &XObject
@@ -451,7 +452,7 @@ func (siw *ServerInterfaceWrapper) GetHeader(c *fiber.Ctx) error {
 
 		err = json.Unmarshal([]byte(valueList[0]), &XComplexObject)
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Error unmarshaling parameter 'X-Complex-Object' as JSON: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("error unmarshaling parameter 'X-Complex-Object' as JSON: %w", err).Error())
 		}
 
 		params.XComplexObject = &XComplexObject
@@ -468,7 +469,7 @@ func (siw *ServerInterfaceWrapper) GetHeader(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "1-Starting-With-Number", valueList[0], &N1StartingWithNumber, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "string", Format: ""})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter 1-Starting-With-Number: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter 1-Starting-With-Number: %w", err).Error())
 		}
 
 		params.N1StartingWithNumber = &N1StartingWithNumber
@@ -501,7 +502,7 @@ func (siw *ServerInterfaceWrapper) GetLabelExplodeArray(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("label", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -530,7 +531,7 @@ func (siw *ServerInterfaceWrapper) GetLabelExplodeObject(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("label", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -559,7 +560,7 @@ func (siw *ServerInterfaceWrapper) GetLabelExplodePrimitive(c *fiber.Ctx) error 
 
 	err = runtime.BindStyledParameterWithOptions("label", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -588,7 +589,7 @@ func (siw *ServerInterfaceWrapper) GetLabelNoExplodeArray(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("label", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -617,7 +618,7 @@ func (siw *ServerInterfaceWrapper) GetLabelNoExplodeObject(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("label", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -646,7 +647,7 @@ func (siw *ServerInterfaceWrapper) GetLabelPrimitive(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("label", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -675,7 +676,7 @@ func (siw *ServerInterfaceWrapper) GetMatrixExplodeArray(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("matrix", "id", c.Params("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter id: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter id: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -704,7 +705,7 @@ func (siw *ServerInterfaceWrapper) GetMatrixExplodeObject(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("matrix", "id", c.Params("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter id: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter id: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -733,7 +734,7 @@ func (siw *ServerInterfaceWrapper) GetMatrixExplodePrimitive(c *fiber.Ctx) error
 
 	err = runtime.BindStyledParameterWithOptions("matrix", "id", c.Params("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter id: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter id: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -762,7 +763,7 @@ func (siw *ServerInterfaceWrapper) GetMatrixNoExplodeArray(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("matrix", "id", c.Params("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter id: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter id: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -791,7 +792,7 @@ func (siw *ServerInterfaceWrapper) GetMatrixNoExplodeObject(c *fiber.Ctx) error 
 
 	err = runtime.BindStyledParameterWithOptions("matrix", "id", c.Params("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter id: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter id: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -820,7 +821,7 @@ func (siw *ServerInterfaceWrapper) GetMatrixPrimitive(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("matrix", "id", c.Params("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter id: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter id: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -849,7 +850,7 @@ func (siw *ServerInterfaceWrapper) GetPassThrough(c *fiber.Ctx) error {
 
 	param, err = url.PathUnescape(c.Params("param"))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Error unescaping path parameter 'param': %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("error unescaping path parameter 'param': %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -879,14 +880,14 @@ func (siw *ServerInterfaceWrapper) GetDeepObject(c *fiber.Ctx) error {
 	var query url.Values
 	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for query string: %w", err).Error())
 	}
 
 	// ------------- Required query parameter "deepObj" -------------
 
 	err = runtime.BindQueryParameterWithOptions("deepObject", true, true, "deepObj", query, &params.DeepObj, runtime.BindQueryParameterOptions{Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter deepObj: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter deepObj: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -916,21 +917,21 @@ func (siw *ServerInterfaceWrapper) GetQueryDelimited(c *fiber.Ctx) error {
 	var query url.Values
 	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for query string: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "sa" -------------
 
 	err = runtime.BindQueryParameterWithOptions("spaceDelimited", false, false, "sa", query, &params.Sa, runtime.BindQueryParameterOptions{Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter sa: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter sa: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "pa" -------------
 
 	err = runtime.BindQueryParameterWithOptions("pipeDelimited", false, false, "pa", query, &params.Pa, runtime.BindQueryParameterOptions{Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter pa: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter pa: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -960,56 +961,56 @@ func (siw *ServerInterfaceWrapper) GetQueryForm(c *fiber.Ctx) error {
 	var query url.Values
 	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for query string: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "ea" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "ea", query, &params.Ea, runtime.BindQueryParameterOptions{Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter ea: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter ea: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "a" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", false, false, "a", query, &params.A, runtime.BindQueryParameterOptions{Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter a: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter a: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "eo" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "eo", query, &params.Eo, runtime.BindQueryParameterOptions{Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter eo: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter eo: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "o" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", false, false, "o", query, &params.O, runtime.BindQueryParameterOptions{Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter o: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter o: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "ep" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "ep", query, &params.Ep, runtime.BindQueryParameterOptions{Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter ep: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter ep: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "p" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", false, false, "p", query, &params.P, runtime.BindQueryParameterOptions{Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter p: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter p: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "ps" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "ps", query, &params.Ps, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter ps: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter ps: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "co" -------------
@@ -1019,7 +1020,7 @@ func (siw *ServerInterfaceWrapper) GetQueryForm(c *fiber.Ctx) error {
 		var value ComplexObject
 		err = json.Unmarshal([]byte(paramValue), &value)
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Error unmarshaling parameter 'co' as JSON: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("error unmarshaling parameter 'co' as JSON: %w", err).Error())
 		}
 
 		params.Co = &value
@@ -1030,7 +1031,7 @@ func (siw *ServerInterfaceWrapper) GetQueryForm(c *fiber.Ctx) error {
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "1s", query, &params.N1s, runtime.BindQueryParameterOptions{Type: "string", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter 1s: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter 1s: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -1059,7 +1060,7 @@ func (siw *ServerInterfaceWrapper) GetSimpleExplodeArray(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("simple", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -1088,7 +1089,7 @@ func (siw *ServerInterfaceWrapper) GetSimpleExplodeObject(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("simple", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -1117,7 +1118,7 @@ func (siw *ServerInterfaceWrapper) GetSimpleExplodePrimitive(c *fiber.Ctx) error
 
 	err = runtime.BindStyledParameterWithOptions("simple", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: true, Required: true, Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -1146,7 +1147,7 @@ func (siw *ServerInterfaceWrapper) GetSimpleNoExplodeArray(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("simple", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -1175,7 +1176,7 @@ func (siw *ServerInterfaceWrapper) GetSimpleNoExplodeObject(c *fiber.Ctx) error 
 
 	err = runtime.BindStyledParameterWithOptions("simple", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -1204,7 +1205,7 @@ func (siw *ServerInterfaceWrapper) GetSimplePrimitive(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("simple", "param", c.Params("param"), &param, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter param: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter param: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -1233,7 +1234,7 @@ func (siw *ServerInterfaceWrapper) GetStartingWithNumber(c *fiber.Ctx) error {
 
 	n1param, err = url.PathUnescape(c.Params("1param"))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Error unescaping path parameter '1param': %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("error unescaping path parameter '1param': %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -1328,6 +1329,418 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/startingWithNumber/:1param", wrapper.GetStartingWithNumber)
 
+}
+
+// RegisterHandlerVersions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler) map[string]map[string]fiber.Handler {
+	return RegisterHandlerVersionsWithOptions(router, si, version, apiHandlers, FiberServerOptions{})
+}
+
+// RegisterHandlerVersionsWithOptions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersionsWithOptions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler,
+	options FiberServerOptions) map[string]map[string]fiber.Handler {
+
+	var wrapper = ServerInterfaceWrapper{
+		Handler:            si,
+		HandlerMiddlewares: options.HandlerMiddlewares,
+	}
+	for _, m := range options.Middlewares {
+		router.Use(fiber.Handler(m))
+	}
+
+	if apiHandlers == nil {
+		apiHandlers = make(map[string]map[string]fiber.Handler)
+	}
+
+	var versionedPath, latestPath string
+
+	// /contentObject/{param}
+	versionedPath = "/" + version + "/contentObject/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/contentObject/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetContentObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetContentObject
+
+	// /cookie
+	versionedPath = "/" + version + "/cookie"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/cookie"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetCookie
+	apiHandlers[latestPath]["GET"] = wrapper.GetCookie
+
+	// /enums
+	versionedPath = "/" + version + "/enums"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/enums"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.EnumParams
+	apiHandlers[latestPath]["GET"] = wrapper.EnumParams
+
+	// /header
+	versionedPath = "/" + version + "/header"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/header"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetHeader
+	apiHandlers[latestPath]["GET"] = wrapper.GetHeader
+
+	// /labelExplodeArray/{.param*}
+	versionedPath = "/" + version + "/labelExplodeArray/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/labelExplodeArray/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetLabelExplodeArray
+	apiHandlers[latestPath]["GET"] = wrapper.GetLabelExplodeArray
+
+	// /labelExplodeObject/{.param*}
+	versionedPath = "/" + version + "/labelExplodeObject/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/labelExplodeObject/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetLabelExplodeObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetLabelExplodeObject
+
+	// /labelExplodePrimitive/{.param*}
+	versionedPath = "/" + version + "/labelExplodePrimitive/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/labelExplodePrimitive/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetLabelExplodePrimitive
+	apiHandlers[latestPath]["GET"] = wrapper.GetLabelExplodePrimitive
+
+	// /labelNoExplodeArray/{.param}
+	versionedPath = "/" + version + "/labelNoExplodeArray/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/labelNoExplodeArray/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetLabelNoExplodeArray
+	apiHandlers[latestPath]["GET"] = wrapper.GetLabelNoExplodeArray
+
+	// /labelNoExplodeObject/{.param}
+	versionedPath = "/" + version + "/labelNoExplodeObject/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/labelNoExplodeObject/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetLabelNoExplodeObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetLabelNoExplodeObject
+
+	// /labelPrimitive/{.param}
+	versionedPath = "/" + version + "/labelPrimitive/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/labelPrimitive/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetLabelPrimitive
+	apiHandlers[latestPath]["GET"] = wrapper.GetLabelPrimitive
+
+	// /matrixExplodeArray/{.id*}
+	versionedPath = "/" + version + "/matrixExplodeArray/:id"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/matrixExplodeArray/:id"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetMatrixExplodeArray
+	apiHandlers[latestPath]["GET"] = wrapper.GetMatrixExplodeArray
+
+	// /matrixExplodeObject/{.id*}
+	versionedPath = "/" + version + "/matrixExplodeObject/:id"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/matrixExplodeObject/:id"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetMatrixExplodeObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetMatrixExplodeObject
+
+	// /matrixExplodePrimitive/{;id*}
+	versionedPath = "/" + version + "/matrixExplodePrimitive/:id"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/matrixExplodePrimitive/:id"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetMatrixExplodePrimitive
+	apiHandlers[latestPath]["GET"] = wrapper.GetMatrixExplodePrimitive
+
+	// /matrixNoExplodeArray/{.id}
+	versionedPath = "/" + version + "/matrixNoExplodeArray/:id"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/matrixNoExplodeArray/:id"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetMatrixNoExplodeArray
+	apiHandlers[latestPath]["GET"] = wrapper.GetMatrixNoExplodeArray
+
+	// /matrixNoExplodeObject/{.id}
+	versionedPath = "/" + version + "/matrixNoExplodeObject/:id"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/matrixNoExplodeObject/:id"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetMatrixNoExplodeObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetMatrixNoExplodeObject
+
+	// /matrixPrimitive/{;id}
+	versionedPath = "/" + version + "/matrixPrimitive/:id"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/matrixPrimitive/:id"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetMatrixPrimitive
+	apiHandlers[latestPath]["GET"] = wrapper.GetMatrixPrimitive
+
+	// /passThrough/{param}
+	versionedPath = "/" + version + "/passThrough/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/passThrough/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetPassThrough
+	apiHandlers[latestPath]["GET"] = wrapper.GetPassThrough
+
+	// /queryDeepObject
+	versionedPath = "/" + version + "/queryDeepObject"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/queryDeepObject"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetDeepObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetDeepObject
+
+	// /queryDelimited
+	versionedPath = "/" + version + "/queryDelimited"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/queryDelimited"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetQueryDelimited
+	apiHandlers[latestPath]["GET"] = wrapper.GetQueryDelimited
+
+	// /queryForm
+	versionedPath = "/" + version + "/queryForm"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/queryForm"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetQueryForm
+	apiHandlers[latestPath]["GET"] = wrapper.GetQueryForm
+
+	// /simpleExplodeArray/{param*}
+	versionedPath = "/" + version + "/simpleExplodeArray/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/simpleExplodeArray/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetSimpleExplodeArray
+	apiHandlers[latestPath]["GET"] = wrapper.GetSimpleExplodeArray
+
+	// /simpleExplodeObject/{param*}
+	versionedPath = "/" + version + "/simpleExplodeObject/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/simpleExplodeObject/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetSimpleExplodeObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetSimpleExplodeObject
+
+	// /simpleExplodePrimitive/{param}
+	versionedPath = "/" + version + "/simpleExplodePrimitive/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/simpleExplodePrimitive/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetSimpleExplodePrimitive
+	apiHandlers[latestPath]["GET"] = wrapper.GetSimpleExplodePrimitive
+
+	// /simpleNoExplodeArray/{param}
+	versionedPath = "/" + version + "/simpleNoExplodeArray/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/simpleNoExplodeArray/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetSimpleNoExplodeArray
+	apiHandlers[latestPath]["GET"] = wrapper.GetSimpleNoExplodeArray
+
+	// /simpleNoExplodeObject/{param}
+	versionedPath = "/" + version + "/simpleNoExplodeObject/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/simpleNoExplodeObject/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetSimpleNoExplodeObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetSimpleNoExplodeObject
+
+	// /simplePrimitive/{param}
+	versionedPath = "/" + version + "/simplePrimitive/:param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/simplePrimitive/:param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetSimplePrimitive
+	apiHandlers[latestPath]["GET"] = wrapper.GetSimplePrimitive
+
+	// /startingWithNumber/{1param}
+	versionedPath = "/" + version + "/startingWithNumber/:1param"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/startingWithNumber/:1param"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetStartingWithNumber
+	apiHandlers[latestPath]["GET"] = wrapper.GetStartingWithNumber
+
+	return apiHandlers
 }
 
 // Base64 encoded, compressed with deflate, json marshaled OpenAPI spec.

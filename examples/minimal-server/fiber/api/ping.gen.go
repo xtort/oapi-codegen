@@ -5,6 +5,7 @@ package api
 
 import (
 	"github.com/gofiber/fiber/v2"
+	fibermid "github.com/oapi-codegen/oapi-codegen/v2/pkg/fibermid"
 )
 
 // Pong defines model for Pong.
@@ -71,4 +72,52 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/ping", wrapper.GetPing)
 
+}
+
+// RegisterHandlerVersions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler) map[string]map[string]fiber.Handler {
+	return RegisterHandlerVersionsWithOptions(router, si, version, apiHandlers, FiberServerOptions{})
+}
+
+// RegisterHandlerVersionsWithOptions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersionsWithOptions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler,
+	options FiberServerOptions) map[string]map[string]fiber.Handler {
+
+	var wrapper = ServerInterfaceWrapper{
+		Handler:            si,
+		HandlerMiddlewares: options.HandlerMiddlewares,
+	}
+	for _, m := range options.Middlewares {
+		router.Use(fiber.Handler(m))
+	}
+
+	if apiHandlers == nil {
+		apiHandlers = make(map[string]map[string]fiber.Handler)
+	}
+
+	var versionedPath, latestPath string
+
+	// /ping
+	versionedPath = "/" + version + "/ping"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/ping"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetPing
+	apiHandlers[latestPath]["GET"] = wrapper.GetPing
+
+	return apiHandlers
 }
