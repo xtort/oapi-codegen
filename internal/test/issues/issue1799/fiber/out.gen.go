@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	fibermid "github.com/oapi-codegen/oapi-codegen/v2/pkg/fibermid"
 )
 
 // PostPostMultibodyApplicationLdPlusJSONProfilehttpswwwW3OrgnsactivitystreamsBody defines parameters for PostPostMultibody.
@@ -159,6 +160,96 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/post-object", wrapper.PostPostObject)
 
+}
+
+// RegisterHandlerVersions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler) map[string]map[string]fiber.Handler {
+	return RegisterHandlerVersionsWithOptions(router, si, version, apiHandlers, FiberServerOptions{})
+}
+
+// RegisterHandlerVersionsWithOptions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersionsWithOptions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler,
+	options FiberServerOptions) map[string]map[string]fiber.Handler {
+
+	var wrapper = ServerInterfaceWrapper{
+		Handler:            si,
+		HandlerMiddlewares: options.HandlerMiddlewares,
+	}
+	for _, m := range options.Middlewares {
+		router.Use(fiber.Handler(m))
+	}
+
+	if apiHandlers == nil {
+		apiHandlers = make(map[string]map[string]fiber.Handler)
+	}
+
+	var versionedPath, latestPath string
+
+	// /get-multibody
+	versionedPath = "/" + version + "/get-multibody"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/get-multibody"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetGetMultibody
+	apiHandlers[latestPath]["GET"] = wrapper.GetGetMultibody
+
+	// /object
+	versionedPath = "/" + version + "/object"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/object"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.GetObject
+	apiHandlers[latestPath]["GET"] = wrapper.GetObject
+
+	// /post-multibody
+	versionedPath = "/" + version + "/post-multibody"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/post-multibody"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.PostPostMultibody
+	apiHandlers[latestPath]["POST"] = wrapper.PostPostMultibody
+
+	// /post-object
+	versionedPath = "/" + version + "/post-object"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/post-object"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.PostPostObject
+	apiHandlers[latestPath]["POST"] = wrapper.PostPostObject
+
+	return apiHandlers
 }
 
 type GetGetMultibodyRequestObject struct {

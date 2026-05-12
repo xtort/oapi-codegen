@@ -20,6 +20,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
+	fibermid "github.com/oapi-codegen/oapi-codegen/v2/pkg/fibermid"
 	"github.com/oapi-codegen/runtime"
 )
 
@@ -218,7 +219,7 @@ func (siw *ServerInterfaceWrapper) ReservedGoKeywordParameters(c *fiber.Ctx) err
 
 	err = runtime.BindStyledParameterWithOptions("simple", "type", c.Params("type"), &pType, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "string", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter type: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter type: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -347,13 +348,13 @@ func (siw *ServerInterfaceWrapper) HeadersExample(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "header1", valueList[0], &Header1, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: true, Type: "string", Format: ""})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter header1: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter header1: %w", err).Error())
 		}
 
 		params.Header1 = Header1
 
 	} else {
-		err = fmt.Errorf("Header parameter header1 is required, but not found: %w", err)
+		err = fmt.Errorf("header parameter header1 is required, but not found: %w", err)
 		return fiber.NewError(fiber.StatusBadRequest, err.Error())
 	}
 
@@ -367,7 +368,7 @@ func (siw *ServerInterfaceWrapper) HeadersExample(c *fiber.Ctx) error {
 
 		err = runtime.BindStyledParameterWithOptions("simple", "header2", valueList[0], &Header2, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""})
 		if err != nil {
-			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter header2: %w", err).Error())
+			return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter header2: %w", err).Error())
 		}
 
 		params.Header2 = &Header2
@@ -460,6 +461,250 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Post(options.BaseURL+"/with-union", wrapper.UnionExample)
 
+}
+
+// RegisterHandlerVersions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler) map[string]map[string]fiber.Handler {
+	return RegisterHandlerVersionsWithOptions(router, si, version, apiHandlers, FiberServerOptions{})
+}
+
+// RegisterHandlerVersionsWithOptions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersionsWithOptions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler,
+	options FiberServerOptions) map[string]map[string]fiber.Handler {
+
+	var wrapper = ServerInterfaceWrapper{
+		Handler:            si,
+		HandlerMiddlewares: options.HandlerMiddlewares,
+	}
+	for _, m := range options.Middlewares {
+		router.Use(fiber.Handler(m))
+	}
+
+	if apiHandlers == nil {
+		apiHandlers = make(map[string]map[string]fiber.Handler)
+	}
+
+	var versionedPath, latestPath string
+
+	// /json
+	versionedPath = "/" + version + "/json"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/json"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.JSONExample
+	apiHandlers[latestPath]["POST"] = wrapper.JSONExample
+
+	// /multipart
+	versionedPath = "/" + version + "/multipart"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/multipart"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.MultipartExample
+	apiHandlers[latestPath]["POST"] = wrapper.MultipartExample
+
+	// /multipart-related
+	versionedPath = "/" + version + "/multipart-related"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/multipart-related"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.MultipartRelatedExample
+	apiHandlers[latestPath]["POST"] = wrapper.MultipartRelatedExample
+
+	// /multiple
+	versionedPath = "/" + version + "/multiple"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/multiple"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.MultipleRequestAndResponseTypes
+	apiHandlers[latestPath]["POST"] = wrapper.MultipleRequestAndResponseTypes
+
+	// /no-content-headers
+	versionedPath = "/" + version + "/no-content-headers"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/no-content-headers"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.NoContentHeaders
+	apiHandlers[latestPath]["POST"] = wrapper.NoContentHeaders
+
+	// /required-json-body
+	versionedPath = "/" + version + "/required-json-body"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/required-json-body"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.RequiredJSONBody
+	apiHandlers[latestPath]["POST"] = wrapper.RequiredJSONBody
+
+	// /required-text-body
+	versionedPath = "/" + version + "/required-text-body"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/required-text-body"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.RequiredTextBody
+	apiHandlers[latestPath]["POST"] = wrapper.RequiredTextBody
+
+	// /reserved-go-keyword-parameters/{type}
+	versionedPath = "/" + version + "/reserved-go-keyword-parameters/:type"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/reserved-go-keyword-parameters/:type"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.ReservedGoKeywordParameters
+	apiHandlers[latestPath]["GET"] = wrapper.ReservedGoKeywordParameters
+
+	// /reusable-responses
+	versionedPath = "/" + version + "/reusable-responses"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/reusable-responses"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.ReusableResponses
+	apiHandlers[latestPath]["POST"] = wrapper.ReusableResponses
+
+	// /text
+	versionedPath = "/" + version + "/text"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/text"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.TextExample
+	apiHandlers[latestPath]["POST"] = wrapper.TextExample
+
+	// /unknown
+	versionedPath = "/" + version + "/unknown"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/unknown"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.UnknownExample
+	apiHandlers[latestPath]["POST"] = wrapper.UnknownExample
+
+	// /unspecified-content-type
+	versionedPath = "/" + version + "/unspecified-content-type"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/unspecified-content-type"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.UnspecifiedContentType
+	apiHandlers[latestPath]["POST"] = wrapper.UnspecifiedContentType
+
+	// /urlencoded
+	versionedPath = "/" + version + "/urlencoded"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/urlencoded"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.URLEncodedExample
+	apiHandlers[latestPath]["POST"] = wrapper.URLEncodedExample
+
+	// /with-headers
+	versionedPath = "/" + version + "/with-headers"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/with-headers"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.HeadersExample
+	apiHandlers[latestPath]["POST"] = wrapper.HeadersExample
+
+	// /with-union
+	versionedPath = "/" + version + "/with-union"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/with-union"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["POST"] = wrapper.UnionExample
+	apiHandlers[latestPath]["POST"] = wrapper.UnionExample
+
+	return apiHandlers
 }
 
 type BadrequestResponse struct {

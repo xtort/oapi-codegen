@@ -5,6 +5,7 @@ package issue518
 
 import (
 	"github.com/gofiber/fiber/v2"
+	fibermid "github.com/oapi-codegen/oapi-codegen/v2/pkg/fibermid"
 )
 
 const (
@@ -98,4 +99,66 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/test", wrapper.Test)
 
+}
+
+// RegisterHandlerVersions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler) map[string]map[string]fiber.Handler {
+	return RegisterHandlerVersionsWithOptions(router, si, version, apiHandlers, FiberServerOptions{})
+}
+
+// RegisterHandlerVersionsWithOptions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersionsWithOptions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler,
+	options FiberServerOptions) map[string]map[string]fiber.Handler {
+
+	var wrapper = ServerInterfaceWrapper{
+		Handler:            si,
+		HandlerMiddlewares: options.HandlerMiddlewares,
+	}
+	for _, m := range options.Middlewares {
+		router.Use(fiber.Handler(m))
+	}
+
+	if apiHandlers == nil {
+		apiHandlers = make(map[string]map[string]fiber.Handler)
+	}
+
+	var versionedPath, latestPath string
+
+	// /auth-check
+	versionedPath = "/" + version + "/auth-check"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/auth-check"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.AuthCheck
+	apiHandlers[latestPath]["GET"] = wrapper.AuthCheck
+
+	// /test
+	versionedPath = "/" + version + "/test"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/test"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.Test
+	apiHandlers[latestPath]["GET"] = wrapper.Test
+
+	return apiHandlers
 }

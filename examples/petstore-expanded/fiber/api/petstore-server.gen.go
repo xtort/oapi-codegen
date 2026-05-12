@@ -14,6 +14,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
+	fibermid "github.com/oapi-codegen/oapi-codegen/v2/pkg/fibermid"
 	"github.com/oapi-codegen/runtime"
 )
 
@@ -54,21 +55,21 @@ func (siw *ServerInterfaceWrapper) FindPets(c *fiber.Ctx) error {
 	var query url.Values
 	query, err = url.ParseQuery(string(c.Request().URI().QueryString()))
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for query string: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for query string: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "tags" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "tags", query, &params.Tags, runtime.BindQueryParameterOptions{Type: "array", Format: ""})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter tags: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter tags: %w", err).Error())
 	}
 
 	// ------------- Optional query parameter "limit" -------------
 
 	err = runtime.BindQueryParameterWithOptions("form", true, false, "limit", query, &params.Limit, runtime.BindQueryParameterOptions{Type: "integer", Format: "int32"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter limit: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter limit: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -115,7 +116,7 @@ func (siw *ServerInterfaceWrapper) DeletePet(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Params("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter id: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter id: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -144,7 +145,7 @@ func (siw *ServerInterfaceWrapper) FindPetByID(c *fiber.Ctx) error {
 
 	err = runtime.BindStyledParameterWithOptions("simple", "id", c.Params("id"), &id, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true, Type: "integer", Format: "int64"})
 	if err != nil {
-		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("Invalid format for parameter id: %w", err).Error())
+		return fiber.NewError(fiber.StatusBadRequest, fmt.Errorf("invalid format for parameter id: %w", err).Error())
 	}
 
 	handler := func(c *fiber.Ctx) error {
@@ -193,6 +194,74 @@ func RegisterHandlersWithOptions(router fiber.Router, si ServerInterface, option
 
 	router.Get(options.BaseURL+"/pets/:id", wrapper.FindPetByID)
 
+}
+
+// RegisterHandlerVersions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler) map[string]map[string]fiber.Handler {
+	return RegisterHandlerVersionsWithOptions(router, si, version, apiHandlers, FiberServerOptions{})
+}
+
+// RegisterHandlerVersionsWithOptions - creates http.Handler with routing matching OpenAPI spec.
+func RegisterHandlerVersionsWithOptions(
+	router fiber.Router,
+	si ServerInterface,
+	version string,
+	apiHandlers map[string]map[string]fiber.Handler,
+	options FiberServerOptions) map[string]map[string]fiber.Handler {
+
+	var wrapper = ServerInterfaceWrapper{
+		Handler:            si,
+		HandlerMiddlewares: options.HandlerMiddlewares,
+	}
+	for _, m := range options.Middlewares {
+		router.Use(fiber.Handler(m))
+	}
+
+	if apiHandlers == nil {
+		apiHandlers = make(map[string]map[string]fiber.Handler)
+	}
+
+	var versionedPath, latestPath string
+
+	// /pets
+	versionedPath = "/" + version + "/pets"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/pets"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["GET"] = wrapper.FindPets
+	apiHandlers[latestPath]["GET"] = wrapper.FindPets
+
+	apiHandlers[versionedPath]["POST"] = wrapper.AddPet
+	apiHandlers[latestPath]["POST"] = wrapper.AddPet
+
+	// /pets/{id}
+	versionedPath = "/" + version + "/pets/:id"
+	if apiHandlers[versionedPath] == nil {
+		apiHandlers[versionedPath] = make(map[string]fiber.Handler)
+	}
+
+	latestPath = "/" + fibermid.LatestVersion + "/pets/:id"
+	if apiHandlers[latestPath] == nil {
+		apiHandlers[latestPath] = make(map[string]fiber.Handler)
+	}
+
+	apiHandlers[versionedPath]["DELETE"] = wrapper.DeletePet
+	apiHandlers[latestPath]["DELETE"] = wrapper.DeletePet
+
+	apiHandlers[versionedPath]["GET"] = wrapper.FindPetByID
+	apiHandlers[latestPath]["GET"] = wrapper.FindPetByID
+
+	return apiHandlers
 }
 
 // Base64 encoded, compressed with deflate, json marshaled OpenAPI spec.
