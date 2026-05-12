@@ -1,8 +1,8 @@
-module github.com/oapi-codegen/oapi-codegen/v2/internal/test
+module github.com/xtort/oapi-codegen/v2/internal/test
 
 go 1.25.9
 
-replace github.com/oapi-codegen/oapi-codegen/v2 => ../../
+replace github.com/xtort/oapi-codegen/v2 => ../../
 
 require (
 	github.com/getkin/kin-openapi v0.137.0
@@ -15,10 +15,10 @@ require (
 	github.com/labstack/echo/v4 v4.15.1
 	github.com/labstack/echo/v5 v5.1.0
 	github.com/oapi-codegen/nullable v1.1.0
-	github.com/oapi-codegen/oapi-codegen/v2 v2.0.0-00010101000000-000000000000
 	github.com/oapi-codegen/runtime v1.4.0
 	github.com/oapi-codegen/testutil v1.1.0
 	github.com/stretchr/testify v1.11.1
+	github.com/xtort/oapi-codegen/v2 v2.0.0-00010101000000-000000000000
 	go.yaml.in/yaml/v3 v3.0.4
 	golang.org/x/time v0.15.0
 )

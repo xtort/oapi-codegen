@@ -1,6 +1,6 @@
-//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config=server.cfg.yaml ../parameters.yaml
-//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config=types.cfg.yaml ../parameters.yaml
-//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config=client.cfg.yaml ../parameters.yaml
+//go:generate go run github.com/xtort/oapi-codegen/v2/cmd/oapi-codegen --config=server.cfg.yaml ../parameters.yaml
+//go:generate go run github.com/xtort/oapi-codegen/v2/cmd/oapi-codegen --config=types.cfg.yaml ../parameters.yaml
+//go:generate go run github.com/xtort/oapi-codegen/v2/cmd/oapi-codegen --config=client.cfg.yaml ../parameters.yaml
 
 package echov5params
 

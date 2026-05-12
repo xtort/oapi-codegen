@@ -3,8 +3,8 @@ package issue2113
 import (
 	"testing"
 
-	"github.com/oapi-codegen/oapi-codegen/v2/internal/test/issues/issue-2113/gen/api"
-	"github.com/oapi-codegen/oapi-codegen/v2/internal/test/issues/issue-2113/gen/common"
+	"github.com/xtort/oapi-codegen/v2/internal/test/issues/issue-2113/gen/api"
+	"github.com/xtort/oapi-codegen/v2/internal/test/issues/issue-2113/gen/common"
 )
 
 // TestExternalRefInResponse verifies that a $ref to an external

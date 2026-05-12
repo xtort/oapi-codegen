@@ -17,11 +17,11 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 
-	chiAPI "github.com/oapi-codegen/oapi-codegen/v2/internal/test/strict-server/chi"
-	clientAPI "github.com/oapi-codegen/oapi-codegen/v2/internal/test/strict-server/client"
-	echoAPI "github.com/oapi-codegen/oapi-codegen/v2/internal/test/strict-server/echo"
-	ginAPI "github.com/oapi-codegen/oapi-codegen/v2/internal/test/strict-server/gin"
-	irisAPI "github.com/oapi-codegen/oapi-codegen/v2/internal/test/strict-server/iris"
+	chiAPI "github.com/xtort/oapi-codegen/v2/internal/test/strict-server/chi"
+	clientAPI "github.com/xtort/oapi-codegen/v2/internal/test/strict-server/client"
+	echoAPI "github.com/xtort/oapi-codegen/v2/internal/test/strict-server/echo"
+	ginAPI "github.com/xtort/oapi-codegen/v2/internal/test/strict-server/gin"
+	irisAPI "github.com/xtort/oapi-codegen/v2/internal/test/strict-server/iris"
 
 	"github.com/oapi-codegen/runtime"
 	"github.com/oapi-codegen/testutil"

@@ -3,7 +3,7 @@ package issue1530_test
 import (
 	"testing"
 
-	issue1530 "github.com/oapi-codegen/oapi-codegen/v2/internal/test/issues/issue-1530"
+	issue1530 "github.com/xtort/oapi-codegen/v2/internal/test/issues/issue-1530"
 	"github.com/stretchr/testify/require"
 )
 
