@@ -20,9 +20,9 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v5"
-	"github.com/oapi-codegen/oapi-codegen/v2/examples/petstore-expanded/echo-v5/api"
-	"github.com/oapi-codegen/oapi-codegen/v2/examples/petstore-expanded/echo-v5/api/models"
-	mw "github.com/oapi-codegen/oapi-codegen/v2/examples/petstore-expanded/echo-v5/middleware"
+	"github.com/xtort/oapi-codegen/v2/examples/petstore-expanded/echo-v5/api"
+	"github.com/xtort/oapi-codegen/v2/examples/petstore-expanded/echo-v5/api/models"
+	mw "github.com/xtort/oapi-codegen/v2/examples/petstore-expanded/echo-v5/middleware"
 	"github.com/oapi-codegen/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

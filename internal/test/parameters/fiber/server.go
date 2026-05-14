@@ -1,5 +1,5 @@
-//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config=server.cfg.yaml ../parameters.yaml
-//go:generate go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config=types.cfg.yaml ../parameters.yaml
+//go:generate go run github.com/xtort/oapi-codegen/v2/cmd/oapi-codegen --config=server.cfg.yaml ../parameters.yaml
+//go:generate go run github.com/xtort/oapi-codegen/v2/cmd/oapi-codegen --config=types.cfg.yaml ../parameters.yaml
 
 package fiberparams
 
@@ -8,7 +8,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	gen "github.com/oapi-codegen/oapi-codegen/v2/internal/test/parameters/fiber/gen"
+	gen "github.com/xtort/oapi-codegen/v2/internal/test/parameters/fiber/gen"
 )
 
 type Server struct{}

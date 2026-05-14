@@ -3,8 +3,8 @@ package issue_2010_test
 import (
 	"testing"
 
-	base "github.com/oapi-codegen/oapi-codegen/v2/internal/test/issues/issue-2010/gen/spec_base"
-	other "github.com/oapi-codegen/oapi-codegen/v2/internal/test/issues/issue-2010/gen/spec_other"
+	base "github.com/xtort/oapi-codegen/v2/internal/test/issues/issue-2010/gen/spec_base"
+	other "github.com/xtort/oapi-codegen/v2/internal/test/issues/issue-2010/gen/spec_other"
 )
 
 // Cross-package cast that broke in 2.1.0+ when both specs generate

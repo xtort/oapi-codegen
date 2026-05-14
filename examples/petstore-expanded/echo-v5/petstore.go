@@ -13,8 +13,8 @@ import (
 	"os"
 
 	"github.com/labstack/echo/v5"
-	"github.com/oapi-codegen/oapi-codegen/v2/examples/petstore-expanded/echo-v5/api"
-	mw "github.com/oapi-codegen/oapi-codegen/v2/examples/petstore-expanded/echo-v5/middleware"
+	"github.com/xtort/oapi-codegen/v2/examples/petstore-expanded/echo-v5/api"
+	mw "github.com/xtort/oapi-codegen/v2/examples/petstore-expanded/echo-v5/middleware"
 )
 
 func main() {
